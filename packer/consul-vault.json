@@ -1,0 +1,58 @@
+{
+
+"variables": {
+"aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
+"aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}"
+},
+
+"provisioners":[
+{
+"type": "shell",
+"script": "provisioners/scripts/install_ansible.sh"
+},
+{
+"type": "ansible-local",
+"playbook_file": "provisioners/ansible/main.yml",
+"staging_directory": "/tmp",
+"role_paths": [
+    "provisioners/ansible/roles/consul",
+    "provisioners/ansible/roles/vault"
+]
+}
+],
+"builders": [{
+"type": "amazon-ebs",
+"access_key": "{{user `aws_access_key`}}",
+"secret_key": "{{user `aws_secret_key`}}",
+
+"region": "eu-west-2",
+
+"source_ami": "ami-a1f5e4c5",
+
+"instance_type": "t2.micro",
+
+"ssh_username": "ec2-user",
+
+"ami_name": "consul-vault-{{timestamp}}",
+
+"ami_description": "consul-vault base AMI",
+
+"ami_virtualization_type": "hvm",
+
+"temporary_key_pair_name": "consul-vault-packer-keypair",
+
+"vpc_id": "vpc-cc2ef2a5",
+
+"subnet_id": "subnet-0791517c",
+
+"run_tags": {
+
+"Name": "consul-vault-packer-image",
+
+"Application": "consul,vault"
+
+}
+
+}]
+
+}

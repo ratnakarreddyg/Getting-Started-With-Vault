@@ -1,0 +1,23 @@
+[Unit]
+Description=Consul Service Discovery
+Documentation=https://consul.io
+After=network-online.target firewalld.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+PrivateTmp=true
+ExecStart=/usr/local/bin/consul agent -config-file /etc/consul.conf.json
+PIDFile=/run/consul/%i.pid
+ExecReload=/bin/kill -HUP $MAINPID
+CapabilityBoundingSet=CAP_IPC_LOCK
+User=root
+Group=root
+ProtectHome=true
+KillMode=process
+Restart=on-failure
+StartLimitBurst=3
+StartLimitInterval=60s
+
+[Install]
+WantedBy=multi-user.target

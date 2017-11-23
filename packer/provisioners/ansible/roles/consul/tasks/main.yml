@@ -1,0 +1,35 @@
+---
+#install consul on RHEL
+- name: install base softwares
+  sudo: yes
+  yum: state=present name={{ item }}
+  with_items:
+  - unzip
+
+- name: download and unzip consl
+  unarchive:
+    src: https://releases.hashicorp.com/consul/1.0.0/consul_1.0.0_linux_amd64.zip
+    dest: /usr/local/bin
+    remote_src: yes
+
+- name: create consul service file
+  copy: src=consul.service dest=/lib/systemd/system/consul.service mode=u=rw,g=r,o= owner=root group=root
+
+- name: create consul config file
+  template: src=consul.conf.j2 dest=/etc/consul.conf.json mode=u=rw,g=r,o=
+
+- name: Create consul data directory
+  file:
+    path: /opt/consul
+    mode: 0700
+    state: directory
+
+- name: Enable and start consul service
+  systemd:
+    name: consul.service
+    state: started
+    enabled: True    
+
+
+
+

@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  sudo: yes
+  tasks:
+    - name: install base softwares
+      yum: state=present name={{ item }}
+      with_items:
+      - unzip
+
+  roles:
+    - consul
+    - vault
+    
